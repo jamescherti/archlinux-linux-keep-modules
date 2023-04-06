@@ -4,7 +4,7 @@ One potential issue when upgrading the Arch Linux kernel is that the modules of 
 
 The pacman package `linux-keep-modules`, written by James Cherti, provides a solution to ensure that the **modules of the currently running Linux kernel remain available until the operating system is restarted**. Additionally, after a system restart, the script automatically removes any unnecessary kernel modules that might have been left behind by previous upgrades (e.g. the kernel modules that are not owned by any Arch Linux package and are not required by the currently running kernel).
 
-The `linux-keep-modules` keeps your system running smoothly and maintains stability even during major Linux kernel upgrades.
+The `linux-keep-modules` package keeps your system running smoothly and maintains stability even during major Linux kernel upgrades.
 
 ## Make and install the linux-keep-modules package
 
@@ -33,12 +33,13 @@ $ sudo pacman -U linux-keep-modules-*-any.pkg.tar.*
 Finally, enable the cleanup-linux-modules service:
 
 ```
+$ sudo systemctl daemon-reload
 $ sudo systemctl enable cleanup-linux-modules
 ```
 
-(The cleanup-linux-modules service will delete the Linux kernel modules that are not owned by any a package at boot time)
+(The cleanup-linux-modules service deletes at boot time the Linux kernel modules that are not owned by any a package at boot time)
 
 ## Links
-- Git repository: https://github.com/jamescherti/archlinux-linux-keep-modules
-- AUR page: https://aur.archlinux.org/packages/linux-keep-modules
-- Article about linux-keep-modules: https://www.jamescherti.com/arch-linux-keep-kernel-modules-during-upgrade
+- [AUR package: linux-keep-modules](https://aur.archlinux.org/packages/linux-keep-modules)
+- [Git repository: archlinux-linux-keep-modules](https://github.com/jamescherti/archlinux-linux-keep-modules)
+- [Article about the linux-keep-modules package](https://www.jamescherti.com/arch-linux-keep-kernel-modules-during-upgrade)
