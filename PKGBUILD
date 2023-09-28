@@ -19,19 +19,15 @@ sha256sums=('SKIP'
             'SKIP')
 
 package() {
-    install -d -m 0755 "$pkgdir/etc/pacman.d/hooks"
+    cd "$srcdir"
 
-    install -Dm644 "$srcdir/linux-modules-backup.hook" \
-        "$pkgdir/etc/pacman.d/hooks/linux-modules-backup.hook"
+    install -Dm644 -t "$pkgdir/usr/share/libalpm/hooks" \
+        "linux-modules-backup.hook" \
+        "linux-modules-restore.hook"
 
-    install -Dm644 "$srcdir/linux-modules-restore.hook" \
-        "$pkgdir/etc/pacman.d/hooks/linux-modules-restore.hook"
+    install -Dm755 -t "$pkgdir/usr/share/libalpm/scripts" \
+        "pacman-hook-linux-modules.sh"
 
-    install -Dm644 "$srcdir/cleanup-linux-modules.service" \
-        "$pkgdir/etc/systemd/system/cleanup-linux-modules.service"
-
-    install -d -m 0755 "$pkgdir/etc/pacman.d/hooks.bin"
-
-    install -Dm755 "$srcdir/pacman-hook-linux-modules.sh" \
-        "$pkgdir/etc/pacman.d/hooks.bin/pacman-hook-linux-modules.sh"
+    install -Dm644 -t "$pkgdir/usr/lib/systemd/system" \
+        "cleanup-linux-modules.service"
 }
