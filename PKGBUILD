@@ -21,13 +21,13 @@ sha256sums=('SKIP'
 package() {
     cd "$srcdir"
 
+    install -Dm644 -t "$pkgdir/usr/lib/systemd/system" \
+        "cleanup-linux-modules.service"
+
     install -Dm644 -t "$pkgdir/usr/share/libalpm/hooks" \
         "linux-modules-backup.hook" \
         "linux-modules-restore.hook"
 
     install -Dm755 -t "$pkgdir/usr/share/libalpm/scripts" \
         "pacman-hook-linux-modules.sh"
-
-    install -Dm644 -t "$pkgdir/usr/lib/systemd/system" \
-        "cleanup-linux-modules.service"
 }
