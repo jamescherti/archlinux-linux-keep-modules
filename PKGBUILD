@@ -1,7 +1,7 @@
 # Maintainer: James Cherti | Contact: http://www.jamescherti.com/contact
 
 pkgname=linux-keep-modules
-pkgver=1.0.1
+pkgver=1.0.1-3
 pkgrel=2
 pkgdesc="Preserve the Linux kernel modules during and after an upgrade"
 url="https://github.com/jamescherti/archlinux-linux-keep-modules"
