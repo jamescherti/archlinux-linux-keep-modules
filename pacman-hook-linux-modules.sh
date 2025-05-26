@@ -24,7 +24,7 @@
 
 set -euf -o pipefail
 
-RSYNC_OPTS=(-a --xattrs --hard-links --acls --sparse)
+RSYNC_OPTS=(-a --xattrs --hard-links --acls)
 MODULES_BASE_DIR="/usr/lib/modules"
 BACKUP_SUBDIR_NAME="pacman-hook-backup"
 BACKUP_MODULES_SRC="${MODULES_BASE_DIR}/${KERNEL_VER}"
