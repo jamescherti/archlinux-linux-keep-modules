@@ -24,6 +24,12 @@
 
 set -euf -o pipefail
 
+RSYNC_OPTS=(-a --xattrs --hard-links --acls --sparse)
+MODULES_BASE_DIR="/usr/lib/modules"
+BACKUP_SUBDIR_NAME="pacman-hook-backup"
+BACKUP_MODULES_SRC="${MODULES_BASE_DIR}/${KERNEL_VER}"
+BACKUP_MODULES_DEST="${MODULES_BASE_DIR}/${BACKUP_SUBDIR_NAME}/${KERNEL_VER}"
+
 log() {
   echo "[pacman-hook-linux-modules]" "$@"
 }
@@ -31,13 +37,10 @@ log() {
 # shellcheck disable=SC2317
 error_handler() {
   local errno="$?"
-  log "Error: ${BASH_SOURCE[1]}:${BASH_LINENO[0]}" \
+  log "[ERROR] ${BASH_SOURCE[1]}:${BASH_LINENO[0]}" \
     "(${BASH_COMMAND} exited with status $errno)" >&2
   exit "${errno}"
 }
-
-trap "error_handler" ERR
-set -o errtrace
 
 #
 # Backup the modules of the currently running Linux kernel.
@@ -46,11 +49,6 @@ backup_linux_modules() {
   if ! [[ -d "$BACKUP_MODULES_SRC" ]]; then
     log "[INFO] There is nothing to backup."
     return 0
-  fi
-
-  if [[ $BACKUP_MODULES_DEST = "" ]]; then
-    log "[ERROR] backup_linux_modules: \$BACKUP_MODULES_DEST is empty."
-    return 1
   fi
 
   log "[UPDATE BACKUP] $BACKUP_MODULES_SRC/ -> $BACKUP_MODULES_DEST/"
@@ -136,12 +134,10 @@ print_usage() {
 }
 
 main() {
-  RSYNC_OPTS=(-a --xattrs --hard-links --acls --sparse)
+  trap "error_handler" ERR
+  set -o errtrace
+
   KERNEL_VER="$(uname -r)"
-  MODULES_BASE_DIR="/usr/lib/modules"
-  BACKUP_SUBDIR_NAME="pacman-hook-backup"
-  BACKUP_MODULES_SRC="${MODULES_BASE_DIR}/${KERNEL_VER}"
-  BACKUP_MODULES_DEST="${MODULES_BASE_DIR}/${BACKUP_SUBDIR_NAME}/${KERNEL_VER}"
 
   if [[ "$KERNEL_VER" = "" ]]; then
     log "Error: invalid value returned by the command 'uname -r'." >&2
