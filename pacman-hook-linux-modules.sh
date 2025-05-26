@@ -48,6 +48,11 @@ backup_linux_modules() {
     return 0
   fi
 
+  if [[ $BACKUP_MODULES_DEST = "" ]]; then
+    log "[ERROR] backup_linux_modules: \$BACKUP_MODULES_DEST is empty."
+    return 1
+  fi
+
   log "[UPDATE BACKUP] $BACKUP_MODULES_SRC/ -> $BACKUP_MODULES_DEST/"
   mkdir -p "$BACKUP_MODULES_DEST" || return 1
   rsync "${RSYNC_OPTS[@]}" \
