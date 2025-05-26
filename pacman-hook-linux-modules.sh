@@ -28,6 +28,17 @@ log() {
   echo "[pacman-hook-linux-modules]" "$@"
 }
 
+# shellcheck disable=SC2317
+error_handler() {
+  local errno="$?"
+  log "Error: ${BASH_SOURCE[1]}:${BASH_LINENO[0]}" \
+    "(${BASH_COMMAND} exited with status $errno)" >&2
+  exit "${errno}"
+}
+
+trap "error_handler" ERR
+set -o errtrace
+
 #
 # Backup the modules of the currently running Linux kernel.
 #
@@ -74,7 +85,7 @@ cleanup_linux_modules() {
 
   readarray -t list_modules < <(ls --almost-all -1 "${MODULES_BASE_DIR}")
   if [[ ${#list_modules[@]} -eq 0 ]]; then
-    echo "Nothing to do."
+    log "Nothing to do."
     return 0
   fi
 
@@ -82,9 +93,9 @@ cleanup_linux_modules() {
   for cur_kernel_ver in "${list_modules[@]}"; do
     local cur_backup_modules_src="${MODULES_BASE_DIR}/${cur_kernel_ver}"
 
-    if [[ -d "$cur_backup_modules_src" ]] && \
-          [[ "$KERNEL_VER" != "$cur_kernel_ver" ]] && \
-          ! pacman -Qo "$cur_backup_modules_src" >/dev/null 2>&1; then
+    if [[ -d "$cur_backup_modules_src" ]] \
+      && [[ "$KERNEL_VER" != "$cur_kernel_ver" ]] \
+      && ! pacman -Qo "$cur_backup_modules_src" >/dev/null 2>&1; then
       local sub_fileordir
       local sub_fileordir_found=0
       if [[ "$cur_kernel_ver" = "$BACKUP_SUBDIR_NAME" ]]; then
@@ -109,14 +120,14 @@ cleanup_linux_modules() {
   done
 
   if [[ $cleanup_done -eq 0 ]]; then
-    echo "Nothing to do."
+    log "Nothing to do."
   fi
 
   return "$errno"
 }
 
 print_usage() {
-  echo "Usage: $0 <backup|restore|cleanup>"
+  log "Usage: $0 <backup|restore|cleanup>"
 }
 
 main() {
@@ -128,7 +139,7 @@ main() {
   BACKUP_MODULES_DEST="${MODULES_BASE_DIR}/${BACKUP_SUBDIR_NAME}/${KERNEL_VER}"
 
   if [[ "$KERNEL_VER" = "" ]]; then
-    echo "Error: invalid value returned by the command 'uname -r'." >&2
+    log "Error: invalid value returned by the command 'uname -r'." >&2
     exit 1
   fi
 
