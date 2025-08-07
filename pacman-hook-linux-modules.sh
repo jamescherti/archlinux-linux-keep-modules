@@ -27,6 +27,7 @@ set -euf -o pipefail
 RSYNC_OPTS=(-a --xattrs --hard-links --acls)
 MODULES_BASE_DIR="/usr/lib/modules"
 BACKUP_SUBDIR_NAME="pacman-hook-backup"
+KERNEL_VER="$(uname -r)"
 BACKUP_MODULES_SRC="${MODULES_BASE_DIR}/${KERNEL_VER}"
 BACKUP_MODULES_DEST="${MODULES_BASE_DIR}/${BACKUP_SUBDIR_NAME}/${KERNEL_VER}"
 
@@ -34,7 +35,7 @@ log() {
   echo "[pacman-hook-linux-modules]" "$@"
 }
 
-# shellcheck disable=SC2317
+# shellcheck disable=SC2329
 error_handler() {
   local errno="$?"
   log "[ERROR] ${BASH_SOURCE[1]}:${BASH_LINENO[0]}" \
@@ -136,8 +137,6 @@ print_usage() {
 main() {
   trap "error_handler" ERR
   set -o errtrace
-
-  KERNEL_VER="$(uname -r)"
 
   if [[ "$KERNEL_VER" = "" ]]; then
     log "Error: invalid value returned by the command 'uname -r'." >&2
